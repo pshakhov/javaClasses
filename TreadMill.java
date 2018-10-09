@@ -1,3 +1,4 @@
+import org.omg.SendingContext.RunTime;
 
 enum mode {walk, run};//определение типа для элемента, поддерживающего режим ходьба/бег
 enum speed_switch {first, second, third};//определение типа для элемента, поддерживающего состояния скорости "первая/вторая/третья"
@@ -10,10 +11,12 @@ enum time_switch {on, off};//определение типа для элемен
 
     int time = 0;
     int speed = 0;
-    int walk_speed = 60;
-    int first_speed = 120;
-    int second_speed = 180;
-    int third_speed = 240;
+    int currTime = 0;
+    int runTime = 0;
+    int walkSpeed = 60;
+    int firstSpeed = 120;
+    int secondSpeed = 180;
+    int thirdSpeed = 240;
 
     public static void main(String[] args) {}
     void startMode() { // начальное состояние
@@ -23,8 +26,8 @@ enum time_switch {on, off};//определение типа для элемен
     }
     
     void setTime() {
-        if (curr_time_but == time_switch.off) {
-            time=time + 60;
+        if (curr_time_but == time_switch.on) {
+            time = time + 60;
         }
         return;
     }
@@ -32,34 +35,42 @@ enum time_switch {on, off};//определение типа для элемен
     void walk() {
         setTime();
         return;
-        }
+    }
 
-    void run()
-        { 
+    void run() { 
+         currTime = java.lang.System.currentTimeMillis()*1000;
          setTime();
-         setSpeed();   
-        }
+         setSpeed();
+         return;   
+    }
 
     void setSpeed() {
-        if(curr_mode_but == mode.run) {
-            if(curr_speed_but==speed_switch.first) {
-            speed=first_speed;
+        runTime = java.lang.System.currentTimeMillis()*1000;
+        if (curr_mode_but == mode.run) {
+            if (curr_speed_but == speed_switch.first && (runTime - currTime > 60)) {
+            currTime = time + 60;
+            speed = firstSpeed;
         }
-        else if(curr_speed_but == speed_switch.first) {
-            speed = second_speed;
+        else if (curr_speed_but == speed_switch.second && (runTime - currTime > 60)) {
+            currTime = time + 60;
+            speed = secondSpeed;
         } 
-        else speed = third_speed;
+        else if (curr_speed_but == speed_switch.third && (runTime - currTime > 60)) {
+        currTime = time + 60;
+        speed = thirdSpeed;
+        }
         }
         return;
-        }
+    }
+
     void setMode() {
-        if(curr_mode_but == mode.run) {
-            speed = walk_speed;
+        if (curr_mode_but == mode.run) {
+            speed = walkSpeed;
         } else setSpeed();
             return;
-        }
+    }
     
-}
+ }
 
 
 
